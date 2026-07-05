@@ -12,13 +12,11 @@ import model.Customer;
 
 import java.sql.SQLException;
 
-
 public class Main extends Application {
     public static int currId;
     public static int randNumber;
     public static Customer chosenCustomer = null;
     public static Appointment selectedAppointment = null;
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
