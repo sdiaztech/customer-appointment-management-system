@@ -1,4 +1,3 @@
 *.class
 out/
-.DS_Storelib/javafx/
-lib/javafx/
+.DS_Store
