@@ -16,7 +16,7 @@ public class Main extends Application {
     public static int currId;
     public static int randNumber;
     public static Customer chosenCustomer = null;
-    public static Appointment selectedAppointment = null;
+    public static Appointment selectedAppointments = null;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -29,4 +29,4 @@ public class Main extends Application {
         JDBC.makeConnection();
         launch(args);
     }
-}
+}run 
