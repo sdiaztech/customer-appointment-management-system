@@ -29,4 +29,4 @@ public class Main extends Application {
         JDBC.makeConnection();
         launch(args);
     }
-}run 
+} 
