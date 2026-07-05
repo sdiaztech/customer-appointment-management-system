@@ -1,8 +1,8 @@
 package controller;
 
-import model.Appointments;
-import database.databaseAppointments;
-import static database.databaseAppointments.getAllApptsForComparison;
+import model.Appointment;
+import database.DatabaseAppointments;
+import static database.DatabaseAppointments.getAllApptsForComparison;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,7 +25,7 @@ import java.time.Month;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class viewReportsController implements Initializable {
+public class ViewReportsController implements Initializable {
     @FXML
     private Button apptsReportButton;
     @FXML
@@ -61,20 +61,14 @@ public class viewReportsController implements Initializable {
     private Integer userInput = null;
 
 
-    /** Initializes the Reports Menu
-     * @param url
-     * @param resourceBundle
-     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Populate all comboBoxes
         fillContactComboBox();
         fillUsersComboBox();
         fillApptTypeComboBox();
         populateMonthComboBox();
     }
 
-    /** Displays only the Appointments Report controls, all others are hidden */
     public void apptsReportButtonListener() {
         hideSchedulesReportControls();
         hideUsersReportControls();
@@ -86,7 +80,6 @@ public class viewReportsController implements Initializable {
         apptsListView.setVisible(true);
     }
 
-    /**  Displays only the Schedules Report controls, all others are hidden  */
     public void schedulesReportButtonListener() {
         hideApptsReportControls();
         hideUsersReportControls();
@@ -97,7 +90,6 @@ public class viewReportsController implements Initializable {
 
     }
 
-    /**  Displays only the Users Report controls, all others are hidden  */
     public void usersReportButtonListener() {
         hideApptsReportControls();
         hideSchedulesReportControls();
@@ -107,12 +99,7 @@ public class viewReportsController implements Initializable {
         usersListView.setVisible(true);
     }
 
-    /** Handles click of 'View Customers' button. Opens 'View Customers' window.
-     * @param actionEvent Click of button
-     * @throws IOException if there is an error in locating the FXML file
-     */
     public void viewCustomersButtonListener(ActionEvent actionEvent) throws IOException {
-        // Open the ViewCustomers scene
         Parent viewCustomersFXML = FXMLLoader.load(getClass().getResource("../view/viewCustomerRecords.fxml"));
         Scene viewCustomersScene = new Scene(viewCustomersFXML, 800, 360);
         Stage viewCustomersStage = new Stage();
@@ -120,38 +107,28 @@ public class viewReportsController implements Initializable {
         viewCustomersStage.setScene(viewCustomersScene);
         viewCustomersStage.show();
 
-        // Close out the current scene
         Stage viewStage = (Stage)viewCustomersButton.getScene().getWindow();
         viewStage.close();
     }
 
-    /** Handles click of 'View Appointments' button. Opens 'View Appointments' window.
-     * @param actionEvent Click of button
-     * @throws IOException if there is an error in locating the FXML file
-     */
     public void viewApptsButtonListener(ActionEvent actionEvent) throws IOException {
-        // Load the View Appointments FXML
         Parent viewApptsFXML = FXMLLoader.load(getClass().getResource("../view/viewAppointments.fxml"));
-        // Create the new stage and scene
         Scene viewApptsScene = new Scene(viewApptsFXML, 800, 360);
         Stage viewApptsStage = new Stage();
         viewApptsStage.setTitle("View Appointments");
         viewApptsStage.setScene(viewApptsScene);
         viewApptsStage.show();
 
-        // Close out the ViewCustomerRecords stage
         Stage customerStage = (Stage)viewApptsButton.getScene().getWindow();
         customerStage.close();
 
     }
 
-    /** Handles click of the 'Exit' 'Button' */
     public void exitButtonListener() {
         Stage stage = (Stage)exitButton.getScene().getWindow();
         stage.close();
     }
 
-    /** Disables/hides controls for the Appointments Report */
     public void hideApptsReportControls() {
         apptTypeDropdown.setVisible(false);
         apptTypeDropdown.setDisable(true);
@@ -162,7 +139,6 @@ public class viewReportsController implements Initializable {
         totalsLabel.setText("");
     }
 
-    /** Disables/hides controls for the Schedules Report*/
     public void hideSchedulesReportControls() {
         contactDropdown.setVisible(false);
         contactDropdown.setDisable(true);
@@ -170,7 +146,6 @@ public class viewReportsController implements Initializable {
         schedulesListView.setDisable(true);
     }
 
-    /** Disables/hides controls for the Users Report*/
     public void hideUsersReportControls() {
         usersDropdown.setVisible(false);
         usersDropdown.setDisable(true);
@@ -185,30 +160,23 @@ public class viewReportsController implements Initializable {
         monthDropdown.setItems(months);
     }
 
-    /** Fills the 'appointmentTypeComboBox' with the distinct types of meetings */
     public void fillApptTypeComboBox() {
         ObservableList<String> apptTypesList =
                 FXCollections.observableArrayList("Initial", "Planning", "De-Briefing", "Virtual", "Closing");
         apptTypeDropdown.setItems(apptTypesList);
     }
 
-    /** Fills the 'contactComboBox' with 'Contact's from the database */
     public void fillContactComboBox() {
-        // Retrieve all contacts from the database
-        ObservableList<String> contactsList = databaseAppointments.getContacts();
-        // Populate contactComboBox
+        ObservableList<String> contactsList = DatabaseAppointments.getContacts();
         contactDropdown.setItems(contactsList);
     }
 
-    /** Populates the 'userIdComboBox' with the 'User's from the database*/
     public void fillUsersComboBox() {
-        ObservableList<String> userIdList = databaseAppointments.getUsers();
+        ObservableList<String> userIdList = DatabaseAppointments.getUsers();
         usersDropdown.setItems(userIdList);
     }
 
-    /** Listens for changes to monthComboBox */
     public void monthDropdownListener() {
-        // Get the value of the monthComboBox as an int
         Month monthDropdownValue = monthDropdown.getValue();
         int monthDropdownInt = monthDropdownValue.getValue();
         monthInput = monthDropdownInt;
@@ -216,10 +184,8 @@ public class viewReportsController implements Initializable {
         if (typeInput != null && monthInput != null) {
             createDisplayApptReport();
         }
-        System.out.println(monthInput);
     }
 
-    /** Listens for changes to appointmentTypeComboBox */
     public void apptTypeComboBoxListener() {
         String apptTypeComboBoxValue = apptTypeDropdown.getValue();
         typeInput = apptTypeComboBoxValue;
@@ -228,30 +194,18 @@ public class viewReportsController implements Initializable {
         }
     }
 
-    /** Creates and shows the Appointments Report.
-     * LAMBDAS used - purpose of Stream API.
-     */
     public void createDisplayApptReport(){
         try {
-            // Get all appointments
-            ObservableList<Appointments> allAppointments = getAllApptsForComparison();
-            // Filter the allAppointments list. First, by the chosen month. Then, by the chosen type.
-            ObservableList<Appointments> filteredList =
+            ObservableList<Appointment> allAppointments = getAllApptsForComparison();
+            ObservableList<Appointment> filteredList =
                     allAppointments.stream().filter(appt -> appt.getStartMonthInt() + 1 == monthInput)
                             .filter(appt -> appt.getType().equals(typeInput))
                             .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
-            System.out.println("Filtered list: " + filteredList);
-            System.out.println("monthInput: " + monthInput);
-            System.out.println("typeInput: " + typeInput);
-            // Create a new list to hold the appointment information
             ObservableList<String> apptsFiltered = FXCollections.observableArrayList();
-            // Take the filtered list and extract the appointment ID for each appointment
             filteredList.forEach(appointment ->
                     apptsFiltered.add("".concat("ID: " + appointment.getApptId() + System.lineSeparator())));
-            // Set the items in the ListView
             apptsListView.setItems(apptsFiltered);
-            // Update the message under the ListView
             totalsLabel.setText("Appointments Matching Criteria: " + String.valueOf(apptsFiltered.size()));
 
         }
@@ -260,22 +214,17 @@ public class viewReportsController implements Initializable {
         }
     }
 
-    /** Listens for changes to contactTypeComboBox. */
     public void contactDropdownListener() {
         String contactDropdownInput = contactDropdown.getValue();
         contactInput = Integer.parseInt(contactDropdownInput.substring(0, 1));
-        System.out.println("Contact Choice: " + contactInput);
 
         createDisplayScheduleReport();
     }
 
-    /** Creates and displays the schedule report.
-     * LAMBDAS USED - purpose of Stream API.
-     */
     public void createDisplayScheduleReport() {
         try {
-            ObservableList<Appointments> allAppointments = getAllApptsForComparison();
-            ObservableList<Appointments> filteredAppointments = allAppointments.stream()
+            ObservableList<Appointment> allAppointments = getAllApptsForComparison();
+            ObservableList<Appointment> filteredAppointments = allAppointments.stream()
                             .filter(appt -> appt.getContactId() == contactInput)
                             .collect(Collectors.toCollection(FXCollections::observableArrayList));
             ObservableList<String> apptInfo = FXCollections.observableArrayList();
@@ -289,7 +238,6 @@ public class viewReportsController implements Initializable {
                             " | End: " + appt.getEndTime() + System.lineSeparator() +
                             " | Customer ID: " + appt.getCustomerId() + System.lineSeparator())));
 
-            System.out.println("All appointments: " + allAppointments);
             schedulesListView.setItems(apptInfo);
         }
         catch (SQLException e) {
@@ -297,23 +245,17 @@ public class viewReportsController implements Initializable {
         }
     }
 
-    /** Listens for changes to 'usersComboBox' */
     public void usersDropdownListener() {
         String userDropdownInput = usersDropdown.getValue();
         userInput = Integer.parseInt(userDropdownInput.substring(0, 1));
-        System.out.println("User Choice: " + userInput);
 
         createDisplayUserReport();
     }
 
-    /** Create and display the User Report.
-     * Displays a list of chosen appointments and counts total appointments scheduled by the User.
-     * LAMBDAS USED - purpose of Stream API
-     */
     public void createDisplayUserReport(){
         try {
-            ObservableList<Appointments> allAppointments = getAllApptsForComparison();
-            ObservableList<Appointments> filteredAppointments = allAppointments.stream()
+            ObservableList<Appointment> allAppointments = getAllApptsForComparison();
+            ObservableList<Appointment> filteredAppointments = allAppointments.stream()
                             .filter(appointment -> appointment.getUserId() == userInput)
                             .collect(Collectors.toCollection(FXCollections::observableArrayList));
             ObservableList<String> apptInfo = FXCollections.observableArrayList();

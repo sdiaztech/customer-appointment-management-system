@@ -9,12 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/** Constructor that gets division list as an 'ObservableList' for countries of US, Canada, and UK*/
-public class databaseDivisions {
+public class DatabaseDivisions {
 
-    /** Getter gets US 'Divisions' as a list
-     * @return 'ObservableList' containing each US 'Division'
-     */
     public static ObservableList<Division> getUSADivisions() {
         ObservableList<Division> divisionList = FXCollections.observableArrayList();
 
@@ -43,9 +39,6 @@ public class databaseDivisions {
         return divisionList;
     }
 
-    /** Getter gets Canadian 'Divisions' as a list
-     * @return 'ObservableList' containing each Canadian 'Division'
-     */
     public static ObservableList<Division> getCanadaDivisions() {
         ObservableList<Division> divisionList = FXCollections.observableArrayList();
 
@@ -74,11 +67,7 @@ public class databaseDivisions {
         return divisionList;
     }
 
-    /** Getter gets UK 'Divisions' as a list
-     * @return 'ObservableList' containing each UK 'Division'
-     */
     public static ObservableList<Division> getUKDivisions() {
-
         ObservableList<Division> divisionList = FXCollections.observableArrayList();
 
         try {

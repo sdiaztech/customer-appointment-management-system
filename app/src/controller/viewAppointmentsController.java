@@ -1,11 +1,11 @@
 package controller;
 
-import database.databaseQuery;
+import database.DatabaseQuery;
 import database.JDBC;
-import model.Appointments;
+import model.Appointment;
 import main.Main;
-import static database.databaseAppointments.getAllAppts;
-import static database.databaseAppointments.getAllApptsForComparison;
+import static database.DatabaseAppointments.getAllAppts;
+import static database.DatabaseAppointments.getAllApptsForComparison;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -32,32 +32,31 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class viewAppointmentsController implements Initializable {
-    public static ObservableList<Appointments> clientAppointments = FXCollections.observableArrayList();
+public class ViewAppointmentsController implements Initializable {
+    public static ObservableList<Appointment> clientAppointments = FXCollections.observableArrayList();
 
     @FXML
-    private TableView<Appointments> viewApptsTableView;
+    private TableView<Appointment> viewApptsTableView;
     @FXML
-    private TableColumn<Appointments,Number> colAppointmentId;
+    private TableColumn<Appointment,Number> colAppointmentId;
     @FXML
-    private TableColumn<Appointments,String> colTitle;
+    private TableColumn<Appointment,String> colTitle;
     @FXML
-    private TableColumn<Appointments,String> colDescription;
+    private TableColumn<Appointment,String> colDescription;
     @FXML
-    private TableColumn<Appointments,String> colType;
+    private TableColumn<Appointment,String> colType;
     @FXML
-    private TableColumn<Appointments,String> colLocation;
+    private TableColumn<Appointment,String> colLocation;
     @FXML
-    private TableColumn<Appointments,Timestamp> colStart;
+    private TableColumn<Appointment,Timestamp> colStart;
     @FXML
-    private TableColumn<Appointments,Timestamp> colEnd;
+    private TableColumn<Appointment,Timestamp> colEnd;
     @FXML
-    private TableColumn<Appointments,Number> colContactId;
+    private TableColumn<Appointment,Number> colContactId;
     @FXML
-    private TableColumn<Appointments,Number> colUserId;
+    private TableColumn<Appointment,Number> colUserId;
     @FXML
-    private TableColumn<Appointments,Number> colCustomerId;
-
+    private TableColumn<Appointment,Number> colCustomerId;
 
     @FXML
     private Button exitButton;
@@ -78,13 +77,8 @@ public class viewAppointmentsController implements Initializable {
     @FXML
     private Label deleteApptConfirmationLabel;
 
-    /** Initializes the View Appointments window
-     * @param url
-     * @param resourceBundle
-     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("View Appointments Opening");
         try {
             displayAppts();
         }
@@ -93,28 +87,20 @@ public class viewAppointmentsController implements Initializable {
         }
     }
 
-    /** Obtains the stored 'Appointment' records and displays them within a 'TableView'
-     * LAMBDAS used - shortens the code, and forego the type declaration of each column
-     * @throws SQLException if the SQL is misshapen
-     */
     public void displayAppts() throws SQLException, ParseException {
-        System.out.println("Display appointment records.");
-        // Obtain all Appointments from the database
         clientAppointments = getAllAppts();
 
-        // Create the columns for the TableView
-        TableColumn<Appointments,Number> columnApptId = new TableColumn<>("Appointment_ID");
-        TableColumn<Appointments,String> columnTitle = new TableColumn<>("Title");
-        TableColumn<Appointments,String> columnDescription = new TableColumn<>("Description");
-        TableColumn<Appointments,String> columnLocation = new TableColumn<>("Location");
-        TableColumn<Appointments,String> columnType = new TableColumn<>("Type");
-        TableColumn<Appointments,String> columnStartTime = new TableColumn<>("Start");
-        TableColumn<Appointments,String> columnEndTime = new TableColumn<>("End");
-        TableColumn<Appointments,Number> columnCustomerId = new TableColumn<>("Customer_ID");
-        TableColumn<Appointments,Number> columnUserId = new TableColumn<>("User_ID");
-        TableColumn<Appointments,Number> columnContactId = new TableColumn<>("Contact_ID");
+        TableColumn<Appointment,Number> columnApptId = new TableColumn<>("Appointment_ID");
+        TableColumn<Appointment,String> columnTitle = new TableColumn<>("Title");
+        TableColumn<Appointment,String> columnDescription = new TableColumn<>("Description");
+        TableColumn<Appointment,String> columnLocation = new TableColumn<>("Location");
+        TableColumn<Appointment,String> columnType = new TableColumn<>("Type");
+        TableColumn<Appointment,String> columnStartTime = new TableColumn<>("Start");
+        TableColumn<Appointment,String> columnEndTime = new TableColumn<>("End");
+        TableColumn<Appointment,Number> columnCustomerId = new TableColumn<>("Customer_ID");
+        TableColumn<Appointment,Number> columnUserId = new TableColumn<>("User_ID");
+        TableColumn<Appointment,Number> columnContactId = new TableColumn<>("Contact_ID");
 
-        // Set the cell values for each column
         columnApptId.setCellValueFactory(cell -> cell.getValue().apptIdProperty());
         columnTitle.setCellValueFactory(cell -> cell.getValue().titleProperty());
         columnDescription.setCellValueFactory(cell -> cell.getValue().descriptionProperty());
@@ -126,19 +112,12 @@ public class viewAppointmentsController implements Initializable {
         columnUserId.setCellValueFactory(cell -> cell.getValue().userIdProperty());
         columnContactId.setCellValueFactory(cell -> cell.getValue().contactIdProperty());
 
-        // Set the items in the TableView
         viewApptsTableView.setItems(clientAppointments);
         viewApptsTableView.getColumns().addAll(columnApptId, columnTitle, columnDescription, columnLocation,
                 columnType, columnStartTime, columnEndTime, columnCustomerId, columnUserId, columnContactId);
-
     }
 
-    /** Switches the window to show all Customer Records
-     * @param actionEvent Click of button
-     * @throws IOException if there is an error locating the FXML file
-     */
     public void viewCustomersButtonListener(ActionEvent actionEvent) throws IOException {
-        // Open the ViewCustomers scene
         Parent viewCustomersFXML = FXMLLoader.load(getClass().getResource("../view/viewCustomerRecords.fxml"));
         Scene viewCustomersScene = new Scene(viewCustomersFXML, 800, 360);
         Stage viewCustomersStage = new Stage();
@@ -146,69 +125,36 @@ public class viewAppointmentsController implements Initializable {
         viewCustomersStage.setScene(viewCustomersScene);
         viewCustomersStage.show();
 
-        // Close out the current scene
         Stage viewStage = (Stage)viewCustomersButton.getScene().getWindow();
         viewStage.close();
     }
 
-    /** Click of 'Exit' button closes the database connection and exits the application.
-     * @param actionEvent Click of 'Exit' button
-     */
     public void exitButtonListener(ActionEvent actionEvent) {
         JDBC.closeConnection();
-        System.out.println("Exit Clicked!");
         Platform.exit();
     }
 
-    /** Click of 'Delete' Button deletes the selected 'Appointment'
-     * @param actionEvent Click of 'Delete' 'Button'
-     * @throws SQLException if SQL is misshapen
-     */
     public void deleteButtonListener(ActionEvent actionEvent) throws SQLException {
-        // Get the apptId from the selected Appointment
-        Appointments deleteSelection = viewApptsTableView.getSelectionModel().getSelectedItem();
+        Appointment deleteSelection = viewApptsTableView.getSelectionModel().getSelectedItem();
         int apptId = deleteSelection.getApptId();
 
-        // Create a delete confirmation alert
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Appointment");
         alert.setContentText("Are you sure you want to delete appointment with ID " + apptId + "?");
         Optional<ButtonType> input = alert.showAndWait();
 
-        // Handle click of 'Ok' Button
         if ((input.isPresent()) && (input.get() == ButtonType.OK)) {
-            System.out.println("Ok clicked.");
-
-            // Use SQL query to delete the customer at that ID
             String sqlDeleteQuery = "DELETE FROM client_schedule.appointments WHERE Appointment_ID = ?";
-
-            // Prepare the statement
-            databaseQuery.setPreparedStatement(JDBC.getConnection(), sqlDeleteQuery);
-
-            PreparedStatement preparedStatement = databaseQuery.getPreparedStatement();
-
-            // Execute the statement
+            DatabaseQuery.setPreparedStatement(JDBC.getConnection(), sqlDeleteQuery);
+            PreparedStatement preparedStatement = DatabaseQuery.getPreparedStatement();
             preparedStatement.setString(1, String.valueOf(apptId));
             preparedStatement.execute();
-
-            // Remove from ObservableList to update TableView
             clientAppointments.remove(deleteSelection);
-
-            // Display Delete Confirmation
             deleteApptConfirmationLabel.setText("Appointment with ID " + apptId + " cancelled.");
-
             viewApptsTableView.refresh();
-        }
-
-        // Handle click of 'Cancel' button
-        if ((input.isPresent()) && (input.get() == ButtonType.NO)) {
-            System.out.println("Cancel button clicked.");
         }
     }
 
-    /** Handles click of 'Add' 'Button', opens the Add Appointment form.
-     * @param actionEvent Click of 'Add' 'Button'
-     */
     public void addButtonListener(ActionEvent actionEvent) {
         try {
             Parent addApptFXML = FXMLLoader.load(getClass().getResource("../view/addAppointment.fxml"));
@@ -221,17 +167,10 @@ public class viewAppointmentsController implements Initializable {
         catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    /** Handles click of 'Update' 'Button', opens the Update Appointment form.
-     * @param actionEvent Click of 'Update' 'Button'
-     */
     public void updateButtonListener(ActionEvent actionEvent) {
-
         Main.selectedAppointments = viewApptsTableView.getSelectionModel().getSelectedItem();
-        System.out.println("Selected Appointment: " + Main.selectedAppointments);
-
         Parent updateApptFXML = null;
         try {
             updateApptFXML = FXMLLoader.load(getClass().getResource("../view/updateAppointment.fxml"));
@@ -246,12 +185,8 @@ public class viewAppointmentsController implements Initializable {
         updateAppointmentStage.show();
     }
 
-    /** Displays all scheduled appointments
-     * @param actionEvent Click of 'All' 'RadioButton'
-     */
     public void allViewRadioButtonListener(ActionEvent actionEvent) {
         deleteApptConfirmationLabel.setText("");
-        // Clear the TableView
         viewApptsTableView.getItems().clear();
         try {
             displayAppts();
@@ -261,40 +196,25 @@ public class viewAppointmentsController implements Initializable {
         }
     }
 
-    /** Displays scheduled appointments in the current month.
-     * LAMBDA used - to shorten the code and forego a return statement and declaring the type 'Appointment'
-     * @param actionEvent Click of 'Month' 'RadioButton'
-     */
     public void monthViewRadioButtonListener(ActionEvent actionEvent) {
         deleteApptConfirmationLabel.setText("");
-        // Check current month
         Month currMonth = LocalDate.now().getMonth();
         int currMonthInt = currMonth.getValue();
-        System.out.println(currMonth + " : " + currMonthInt);
-
-        // Filter ObservableList clientAppts for Appointments occurring this month
         try {
-            // Create a list containing all appointments
-            ObservableList<Appointments> allAppointments = getAllApptsForComparison();
-            // Create a list from the allAppts list by filtering
-            ObservableList<Appointments> apptsThisMonth =
+            ObservableList<Appointment> allAppointments = getAllApptsForComparison();
+            ObservableList<Appointment> apptsThisMonth =
                     allAppointments.stream().filter(appt -> appt.getStartMonthInt() + 1 == currMonthInt).collect(Collectors.toCollection(FXCollections::observableArrayList));
-            // Clear the TableView
             viewApptsTableView.getColumns().clear();
-
-            // Create the columns for the TableView
-            TableColumn<Appointments,Number> columnApptId = new TableColumn<>("Appointment_ID");
-            TableColumn<Appointments,String> columnTitle = new TableColumn<>("Title");
-            TableColumn<Appointments,String> columnDescription = new TableColumn<>("Description");
-            TableColumn<Appointments,String> columnLocation = new TableColumn<>("Location");
-            TableColumn<Appointments,String> columnType = new TableColumn<>("Type");
-            TableColumn<Appointments,String> columnStart = new TableColumn<>("Start");
-            TableColumn<Appointments,String> columnEnd = new TableColumn<>("End");
-            TableColumn<Appointments,Number> columnCustomerId = new TableColumn<>("Customer_ID");
-            TableColumn<Appointments,Number> columnUserId = new TableColumn<>("User_ID");
-            TableColumn<Appointments,Number> columnContactId = new TableColumn<>("Contact_ID");
-
-            // Set the cell values for each column
+            TableColumn<Appointment,Number> columnApptId = new TableColumn<>("Appointment_ID");
+            TableColumn<Appointment,String> columnTitle = new TableColumn<>("Title");
+            TableColumn<Appointment,String> columnDescription = new TableColumn<>("Description");
+            TableColumn<Appointment,String> columnLocation = new TableColumn<>("Location");
+            TableColumn<Appointment,String> columnType = new TableColumn<>("Type");
+            TableColumn<Appointment,String> columnStart = new TableColumn<>("Start");
+            TableColumn<Appointment,String> columnEnd = new TableColumn<>("End");
+            TableColumn<Appointment,Number> columnCustomerId = new TableColumn<>("Customer_ID");
+            TableColumn<Appointment,Number> columnUserId = new TableColumn<>("User_ID");
+            TableColumn<Appointment,Number> columnContactId = new TableColumn<>("Contact_ID");
             columnApptId.setCellValueFactory(cell -> cell.getValue().apptIdProperty());
             columnTitle.setCellValueFactory(cell -> cell.getValue().titleProperty());
             columnDescription.setCellValueFactory(cell -> cell.getValue().descriptionProperty());
@@ -305,13 +225,9 @@ public class viewAppointmentsController implements Initializable {
             columnCustomerId.setCellValueFactory(cell -> cell.getValue().customerIdProperty());
             columnUserId.setCellValueFactory(cell -> cell.getValue().userIdProperty());
             columnContactId.setCellValueFactory(cell -> cell.getValue().contactIdProperty());
-
-            // Set the items in the TableView
             viewApptsTableView.setItems(clientAppointments);
             viewApptsTableView.getColumns().addAll(columnApptId, columnTitle, columnDescription, columnLocation,
                     columnType, columnStart, columnEnd, columnCustomerId, columnUserId, columnContactId);
-
-            // Set the filtered items in the TableView
             viewApptsTableView.setItems(apptsThisMonth);
         }
         catch (SQLException e) {
@@ -319,42 +235,26 @@ public class viewAppointmentsController implements Initializable {
         }
     }
 
-
-    /** Displays scheduled appointments in the current week.
-     * LAMBDA used - to shorten the code and forego a return statement and declaring the type * 'Appointment'
-     * @param actionEvent Click of 'Week' 'RadioButton'
-     */
     public void weekViewRadioButtonListener(ActionEvent actionEvent)
     {
         deleteApptConfirmationLabel.setText("");
-        // Create a Calendar Object and set the current Date on it
         Calendar calendar = Calendar.getInstance();
-        // Get the current week number from the calendar
         int currentWeekInt = calendar.get(Calendar.WEEK_OF_YEAR);
-        System.out.println("Current week int: " + currentWeekInt);
-
         try {
-            // Create a new list containing all appointments
-            ObservableList<Appointments> allAppointments = getAllApptsForComparison();
-            // Create a new list by filtering for appointments that match the current week
-            ObservableList<Appointments> appointmentsThisWeek =
+            ObservableList<Appointment> allAppointments = getAllApptsForComparison();
+            ObservableList<Appointment> appointmentsThisWeek =
                     allAppointments.stream().filter(appt -> appt.getStartWeek() == currentWeekInt).collect(Collectors.toCollection(FXCollections::observableArrayList));
-            // Clear the TableView
             viewApptsTableView.getColumns().clear();
-
-            // Create the columns for the TableView
-            TableColumn<Appointments,Number> columnApptId = new TableColumn<>("Appointment_ID");
-            TableColumn<Appointments,String> columnTitle = new TableColumn<>("Title");
-            TableColumn<Appointments,String> columnDescription = new TableColumn<>("Description");
-            TableColumn<Appointments,String> columnLocation = new TableColumn<>("Location");
-            TableColumn<Appointments,String> columnType = new TableColumn<>("Type");
-            TableColumn<Appointments,String> columnStart = new TableColumn<>("Start");
-            TableColumn<Appointments,String> columnEnd = new TableColumn<>("End");
-            TableColumn<Appointments,Number> columnCustomerId = new TableColumn<>("Customer_ID");
-            TableColumn<Appointments,Number> columnUserId = new TableColumn<>("User_ID");
-            TableColumn<Appointments,Number> columnContactId = new TableColumn<>("Contact_ID");
-
-            // Set the cell values for each column
+            TableColumn<Appointment,Number> columnApptId = new TableColumn<>("Appointment_ID");
+            TableColumn<Appointment,String> columnTitle = new TableColumn<>("Title");
+            TableColumn<Appointment,String> columnDescription = new TableColumn<>("Description");
+            TableColumn<Appointment,String> columnLocation = new TableColumn<>("Location");
+            TableColumn<Appointment,String> columnType = new TableColumn<>("Type");
+            TableColumn<Appointment,String> columnStart = new TableColumn<>("Start");
+            TableColumn<Appointment,String> columnEnd = new TableColumn<>("End");
+            TableColumn<Appointment,Number> columnCustomerId = new TableColumn<>("Customer_ID");
+            TableColumn<Appointment,Number> columnUserId = new TableColumn<>("User_ID");
+            TableColumn<Appointment,Number> columnContactId = new TableColumn<>("Contact_ID");
             columnApptId.setCellValueFactory(cell -> cell.getValue().apptIdProperty());
             columnTitle.setCellValueFactory(cell -> cell.getValue().titleProperty());
             columnDescription.setCellValueFactory(cell -> cell.getValue().descriptionProperty());
@@ -365,16 +265,11 @@ public class viewAppointmentsController implements Initializable {
             columnCustomerId.setCellValueFactory(cell -> cell.getValue().customerIdProperty());
             columnUserId.setCellValueFactory(cell -> cell.getValue().userIdProperty());
             columnContactId.setCellValueFactory(cell -> cell.getValue().contactIdProperty());
-
-            // Set the items in the TableView
             viewApptsTableView.setItems(clientAppointments);
             viewApptsTableView.getColumns().addAll(columnApptId, columnTitle, columnDescription, columnLocation,
                     columnType, columnStart, columnEnd, columnCustomerId, columnUserId, columnContactId);
-
-            // Set the filtered items in the TableView
             viewApptsTableView.setItems(appointmentsThisWeek);
         }
-
         catch (SQLException e){
             e.printStackTrace();
         }

@@ -1,8 +1,11 @@
 package database;
 
-import model.Appointments;
+import model.Appointment;
 
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -13,15 +16,10 @@ import java.sql.Timestamp;
 
 import java.text.ParseException;
 
-public class databaseAppointments {
-    /** Retrieves all 'Appointment' records from the appointment table.
-     * @return ArrayList containing all the customers from the database.
-     * @throws SQLException if the SQL is misshapen.
-     */
-    public static ObservableList<Appointments> getAllAppts() throws ParseException {
+public class DatabaseAppointments {
+    public static ObservableList<Appointment> getAllAppts() throws ParseException {
 
-        ObservableList<Appointments> appointments = FXCollections.observableArrayList();
-        // Retrieve stored appointments from database
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         try {
 
             String sqlQuery = "SELECT * FROM appointments";
@@ -29,7 +27,6 @@ public class databaseAppointments {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                // Get the information from the database
                 int apptId = resultSet.getInt("Appointment_ID");
                 String title = resultSet.getString("Title");
                 String description = resultSet.getString("Description");
@@ -41,7 +38,6 @@ public class databaseAppointments {
                 int userId = resultSet.getInt("User_ID");
                 int contactId = resultSet.getInt("Contact_ID");
 
-                // Convert all to Properties to display in the TableView
                 IntegerProperty apptIdProperty = new SimpleIntegerProperty(apptId);
                 StringProperty titleProperty = new SimpleStringProperty(title);
                 StringProperty descriptionProperty = new SimpleStringProperty(description);
@@ -53,12 +49,10 @@ public class databaseAppointments {
                 IntegerProperty userIdProperty = new SimpleIntegerProperty(userId);
                 IntegerProperty contactIdProperty = new SimpleIntegerProperty(contactId);
 
-                // Create a new Appointment using the data obtained from the database
-                Appointments currentAppointments = new Appointments(
+                Appointment currentAppointments = new Appointment(
                         apptIdProperty, titleProperty, descriptionProperty, locationProperty, typeProperty,
                         startProperty, endProperty, userIdProperty, customerIdProperty, contactIdProperty);
 
-                // Add the customer to customers ArrayList
                 appointments.add(currentAppointments);
             }
         }
@@ -69,8 +63,8 @@ public class databaseAppointments {
         return appointments;
     }
 
-    public static ObservableList<Appointments> getAllApptsForComparison() throws SQLException {
-        ObservableList<Appointments> appointments = FXCollections.observableArrayList();
+    public static ObservableList<Appointment> getAllApptsForComparison() throws SQLException {
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
 
         try {
             String sqlQuery = "SELECT * FROM appointments";
@@ -78,9 +72,6 @@ public class databaseAppointments {
             ResultSet apptsResultSet = preparedStatement.executeQuery();
 
             while (apptsResultSet.next()) {
-                System.out.println(apptsResultSet);
-
-                // Get the information from the database
                 int apptId = apptsResultSet.getInt("Appointment_ID");
                 String title = apptsResultSet.getString("Title");
                 String description = apptsResultSet.getString("Description");
@@ -92,7 +83,6 @@ public class databaseAppointments {
                 int userId = apptsResultSet.getInt("User_ID");
                 int contactId = apptsResultSet.getInt("Contact_ID");
 
-                // Convert all to Properties to display in the TableView
                 IntegerProperty apptIdProperty = new SimpleIntegerProperty(apptId);
                 StringProperty titleProperty = new SimpleStringProperty(title);
                 StringProperty descriptionProperty = new SimpleStringProperty(description);
@@ -104,13 +94,10 @@ public class databaseAppointments {
                 IntegerProperty userIdProperty = new SimpleIntegerProperty(userId);
                 IntegerProperty contactIdProperty = new SimpleIntegerProperty(contactId);
 
-
-                // Create new Appointment using the data obtained from the database
-                Appointments currAppointments = new Appointments(
+                Appointment currAppointments = new Appointment(
                         apptIdProperty, titleProperty, descriptionProperty, locationProperty, typeProperty,
                         startProperty, endProperty, userIdProperty, customerIdProperty, contactIdProperty);
 
-                // Add customer to the customers ArrayList
                 appointments.add(currAppointments);
             }
         }
@@ -121,9 +108,9 @@ public class databaseAppointments {
         return appointments;
     }
 
-    public static ObservableList<Appointments> getAllApptsForCustomer(int customerIdToFind)
+    public static ObservableList<Appointment> getAllApptsForCustomer(int customerIdToFind)
     {
-        ObservableList<Appointments> appointments = FXCollections.observableArrayList();
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
 
         try {
             String sqlQuery = "SELECT * FROM appointments WHERE Customer_ID = ?";
@@ -133,9 +120,6 @@ public class databaseAppointments {
             ResultSet apptsResultSet = preparedStatement.executeQuery();
 
             while (apptsResultSet.next()) {
-                System.out.println(apptsResultSet);
-
-                // Get the information from the database
                 int apptId = apptsResultSet.getInt("Appointment_ID");
                 String title = apptsResultSet.getString("Title");
                 String description = apptsResultSet.getString("Description");
@@ -147,7 +131,6 @@ public class databaseAppointments {
                 int userId = apptsResultSet.getInt("User_ID");
                 int contactId = apptsResultSet.getInt("Contact_ID");
 
-                // Convert all to Properties to display in the TableView
                 IntegerProperty apptIdProperty = new SimpleIntegerProperty(apptId);
                 StringProperty titleProperty = new SimpleStringProperty(title);
                 StringProperty descriptionProperty = new SimpleStringProperty(description);
@@ -159,13 +142,10 @@ public class databaseAppointments {
                 IntegerProperty userIdProperty = new SimpleIntegerProperty(userId);
                 IntegerProperty contactIdProperty = new SimpleIntegerProperty(contactId);
 
-
-                // Create new Appointment using the data obtained from the database
-                Appointments currentAppointments = new Appointments(
+                Appointment currentAppointments = new Appointment(
                         apptIdProperty, titleProperty, descriptionProperty, locationProperty, typeProperty,
                         startProperty, endProperty, userIdProperty, customerIdProperty, contactIdProperty);
 
-                // Add customer to the customers ArrayList
                 appointments.add(currentAppointments);
             }
         }
@@ -175,10 +155,6 @@ public class databaseAppointments {
         return appointments;
     }
 
-
-    /** Getter gets a list of all Contacts
-     * @return 'ObservableList' of 'Contact'(s) from the database
-     */
     public static ObservableList<String> getContacts() {
         ObservableList<String> contacts = FXCollections.observableArrayList();
         try {
@@ -187,7 +163,6 @@ public class databaseAppointments {
             ResultSet contactsResultSet = preparedStatement.executeQuery();
 
             while (contactsResultSet.next()) {
-                // Get the information from the database
                 int contactId = contactsResultSet.getInt("Contact_ID");
                 String contactName = contactsResultSet.getString("Contact_Name");
 
@@ -202,22 +177,14 @@ public class databaseAppointments {
         return contacts;
     }
 
-    /** Getter gets a list of all Customers
-     * @return 'ObservableList' of all Customers
-     */
     public static ObservableList<String> getCustomers() {
-        System.out.println("Get Customers");
-
         ObservableList<String> customerChoices = FXCollections.observableArrayList();
-        // Get the data from the database and add it to the customers list
         try {
-            // Make the SQL query
             String sqlQuery = "SELECT * FROM client_schedule.customers";
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                // Get the data from the database
                 int customerId = resultSet.getInt("Customer_ID");
                 String customerName = resultSet.getString("Customer_Name");
 
@@ -231,9 +198,6 @@ public class databaseAppointments {
         return customerChoices;
     }
 
-    /** Getter gets a list of Users
-     * @return An 'ObservableList' containing each 'User'
-     */
     public static ObservableList<String> getUsers() {
         ObservableList<String> users = FXCollections.observableArrayList();
 
@@ -256,10 +220,6 @@ public class databaseAppointments {
         return users;
     }
 
-    /** Getter gets a customer's ID number and full name
-     * @param customerIdNumber - customer's ID number
-     * @return customer's ID number and full name concatenated
-     */
     public static String getCustomerIdName(int customerIdNumber) {
         String customerName = "";
 
@@ -283,10 +243,6 @@ public class databaseAppointments {
         return customerIdName;
     }
 
-    /** Returns the Customer_ID as a 'String' value
-     * @param customerOption - a single customer
-     * @return Customer_ID as a 'String'
-     */
     public static int getCustomerIdString(String customerOption) {
         String customerIdString = customerOption.substring(0, customerOption.indexOf(" ", 0));
         return Integer.parseInt(customerIdString);
