@@ -1,97 +1,52 @@
 package database;
 
-import model.Division;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.Division;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DatabaseDivisions {
+public final class DatabaseDivisions {
+    private DatabaseDivisions() {
+    }
 
     public static ObservableList<Division> getUSADivisions() {
-        ObservableList<Division> divisionList = FXCollections.observableArrayList();
-
-        try {
-            String sqlQuery = "SELECT * FROM client_schedule.first_level_divisions WHERE Country_ID=1";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                int divisionId = resultSet.getInt("Division_ID");
-                String divisionName = resultSet.getString("Division");
-                String divisionDate = resultSet.getString("Create_Date");
-                String createdBy = resultSet.getString("Created_By");
-                String lastUpdate = resultSet.getString("Last_Update");
-                String lastUpdatedBy = resultSet.getString("Last_Updated_By");
-                int countryId = resultSet.getInt("Country_ID");
-
-                Division division = new Division(divisionId, divisionName, divisionDate, createdBy, lastUpdate, lastUpdatedBy, countryId);
-                divisionList.add(division);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return divisionList;
+        return getDivisionsByCountry(1);
     }
 
     public static ObservableList<Division> getCanadaDivisions() {
-        ObservableList<Division> divisionList = FXCollections.observableArrayList();
-
-        try {
-            String sqlQuery = "SELECT * FROM first_level_divisions WHERE Country_ID = 2";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                int divisionId = resultSet.getInt("Division_ID");
-                String divisionName = resultSet.getString("Division");
-                String date = resultSet.getString("Create_Date");
-                String createdBy = resultSet.getString("Created_By");
-                String lastUpdate = resultSet.getString("Last_Update");
-                String lastUpdatedBy = resultSet.getString("Last_Updated_By");
-                int countryId = resultSet.getInt("Country_ID");
-
-                Division division = new Division(divisionId, divisionName, date, createdBy, lastUpdate, lastUpdatedBy, countryId);
-                divisionList.add(division);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return divisionList;
+        return getDivisionsByCountry(2);
     }
 
     public static ObservableList<Division> getUKDivisions() {
-        ObservableList<Division> divisionList = FXCollections.observableArrayList();
+        return getDivisionsByCountry(3);
+    }
 
-        try {
-            String sqlQuery = "SELECT * FROM first_level_divisions WHERE Country_ID = 3";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
+    private static ObservableList<Division> getDivisionsByCountry(int countryId) {
+        ObservableList<Division> divisions = FXCollections.observableArrayList();
+        String sql = "SELECT Division_ID, Division, Create_Date, Created_By, Last_Update, "
+                + "Last_Updated_By, Country_ID FROM first_level_divisions WHERE Country_ID = ?";
 
-            while (resultSet.next()) {
-                int divisionId = resultSet.getInt("Division_ID");
-                String divisionName = resultSet.getString("Division");
-                String date = resultSet.getString("Create_Date");
-                String createdBy = resultSet.getString("Created_By");
-                String lastUpdate = resultSet.getString("Last_Update");
-                String lastUpdatedBy = resultSet.getString("Last_Updated_By");
-                int countryId = resultSet.getInt("Country_ID");
-
-                Division division = new Division(divisionId, divisionName, date, createdBy, lastUpdate, lastUpdatedBy, countryId);
-                divisionList.add(division);
+        try (PreparedStatement statement = JDBC.getConnection().prepareStatement(sql)) {
+            statement.setInt(1, countryId);
+            try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    divisions.add(new Division(
+                            results.getInt("Division_ID"),
+                            results.getString("Division"),
+                            results.getString("Create_Date"),
+                            results.getString("Created_By"),
+                            results.getString("Last_Update"),
+                            results.getString("Last_Updated_By"),
+                            results.getInt("Country_ID")));
+                }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return divisionList;
+        return divisions;
     }
 }

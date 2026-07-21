@@ -10,16 +10,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class DatabaseCountries {
+public final class DatabaseCountries {
+
+    private DatabaseCountries() {
+    }
 
     public static ObservableList<Country> getAllCountries() {
         ObservableList<Country> countryList = FXCollections.observableArrayList();
 
-        try {
-            String sqlQuery = "SELECT * FROM countries";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
+        String sqlQuery = "SELECT Country_ID, Country FROM countries";
+        try (PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 int countryId = resultSet.getInt("Country_ID");
                 String countryName = resultSet.getString("Country");

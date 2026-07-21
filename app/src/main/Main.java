@@ -25,8 +25,13 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    @Override
+    public void stop() {
+        JDBC.closeConnection();
+    }
+
     public static void main(String[] args) throws SQLException {
         JDBC.makeConnection();
         launch(args);
     }
-} 
+}

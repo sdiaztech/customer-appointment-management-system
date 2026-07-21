@@ -1,250 +1,123 @@
 package database;
 
-import model.Appointment;
-
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.Appointment;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-
 import java.text.ParseException;
 
-public class DatabaseAppointments {
+public final class DatabaseAppointments {
+    private static final String APPOINTMENT_COLUMNS =
+            "Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID";
+
+    private DatabaseAppointments() {
+    }
+
     public static ObservableList<Appointment> getAllAppts() throws ParseException {
-
-        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-        try {
-
-            String sqlQuery = "SELECT * FROM appointments";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                int apptId = resultSet.getInt("Appointment_ID");
-                String title = resultSet.getString("Title");
-                String description = resultSet.getString("Description");
-                String location = resultSet.getString("Location");
-                String type = resultSet.getString("Type");
-                Timestamp start = Timestamp.valueOf(resultSet.getTimestamp("Start").toLocalDateTime());
-                Timestamp end = Timestamp.valueOf(resultSet.getTimestamp("End").toLocalDateTime());
-                int customerId = resultSet.getInt("Customer_ID");
-                int userId = resultSet.getInt("User_ID");
-                int contactId = resultSet.getInt("Contact_ID");
-
-                IntegerProperty apptIdProperty = new SimpleIntegerProperty(apptId);
-                StringProperty titleProperty = new SimpleStringProperty(title);
-                StringProperty descriptionProperty = new SimpleStringProperty(description);
-                StringProperty locationProperty = new SimpleStringProperty(location);
-                StringProperty typeProperty = new SimpleStringProperty(type);
-                StringProperty startProperty = new SimpleStringProperty(start.toString());
-                StringProperty endProperty = new SimpleStringProperty(end.toString());
-                IntegerProperty customerIdProperty = new SimpleIntegerProperty(customerId);
-                IntegerProperty userIdProperty = new SimpleIntegerProperty(userId);
-                IntegerProperty contactIdProperty = new SimpleIntegerProperty(contactId);
-
-                Appointment currentAppointments = new Appointment(
-                        apptIdProperty, titleProperty, descriptionProperty, locationProperty, typeProperty,
-                        startProperty, endProperty, userIdProperty, customerIdProperty, contactIdProperty);
-
-                appointments.add(currentAppointments);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return appointments;
+        return queryAppointments("SELECT " + APPOINTMENT_COLUMNS + " FROM appointments", null);
     }
 
     public static ObservableList<Appointment> getAllApptsForComparison() throws SQLException {
+        return queryAppointments("SELECT " + APPOINTMENT_COLUMNS + " FROM appointments", null);
+    }
+
+    public static ObservableList<Appointment> getAllApptsForCustomer(int customerId) {
+        return queryAppointments(
+                "SELECT " + APPOINTMENT_COLUMNS + " FROM appointments WHERE Customer_ID = ?",
+                customerId);
+    }
+
+    private static ObservableList<Appointment> queryAppointments(String sql, Integer customerId) {
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
 
-        try {
-            String sqlQuery = "SELECT * FROM appointments";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet apptsResultSet = preparedStatement.executeQuery();
-
-            while (apptsResultSet.next()) {
-                int apptId = apptsResultSet.getInt("Appointment_ID");
-                String title = apptsResultSet.getString("Title");
-                String description = apptsResultSet.getString("Description");
-                String location = apptsResultSet.getString("Location");
-                String type  = apptsResultSet.getString("Type");
-                Timestamp start = apptsResultSet.getTimestamp("Start");
-                Timestamp end = apptsResultSet.getTimestamp("End");
-                int customerId = apptsResultSet.getInt("Customer_ID");
-                int userId = apptsResultSet.getInt("User_ID");
-                int contactId = apptsResultSet.getInt("Contact_ID");
-
-                IntegerProperty apptIdProperty = new SimpleIntegerProperty(apptId);
-                StringProperty titleProperty = new SimpleStringProperty(title);
-                StringProperty descriptionProperty = new SimpleStringProperty(description);
-                StringProperty locationProperty = new SimpleStringProperty(location);
-                StringProperty typeProperty = new SimpleStringProperty(type);
-                StringProperty startProperty = new SimpleStringProperty(start.toString());
-                StringProperty endProperty = new SimpleStringProperty(end.toString());
-                IntegerProperty customerIdProperty = new SimpleIntegerProperty(customerId);
-                IntegerProperty userIdProperty = new SimpleIntegerProperty(userId);
-                IntegerProperty contactIdProperty = new SimpleIntegerProperty(contactId);
-
-                Appointment currAppointments = new Appointment(
-                        apptIdProperty, titleProperty, descriptionProperty, locationProperty, typeProperty,
-                        startProperty, endProperty, userIdProperty, customerIdProperty, contactIdProperty);
-
-                appointments.add(currAppointments);
+        try (PreparedStatement statement = JDBC.getConnection().prepareStatement(sql)) {
+            if (customerId != null) {
+                statement.setInt(1, customerId);
             }
-        }
-        catch (SQLException e) {
+
+            try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    appointments.add(mapAppointment(results));
+                }
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return appointments;
     }
 
-    public static ObservableList<Appointment> getAllApptsForCustomer(int customerIdToFind)
-    {
-        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-
-        try {
-            String sqlQuery = "SELECT * FROM appointments WHERE Customer_ID = ?";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            preparedStatement.setInt(1, customerIdToFind);
-
-            ResultSet apptsResultSet = preparedStatement.executeQuery();
-
-            while (apptsResultSet.next()) {
-                int apptId = apptsResultSet.getInt("Appointment_ID");
-                String title = apptsResultSet.getString("Title");
-                String description = apptsResultSet.getString("Description");
-                String location = apptsResultSet.getString("Location");
-                String type = apptsResultSet.getString("Type");
-                Timestamp start = apptsResultSet.getTimestamp("Start");
-                Timestamp end = apptsResultSet.getTimestamp("End");
-                int customerId = apptsResultSet.getInt("Customer_ID");
-                int userId = apptsResultSet.getInt("User_ID");
-                int contactId = apptsResultSet.getInt("Contact_ID");
-
-                IntegerProperty apptIdProperty = new SimpleIntegerProperty(apptId);
-                StringProperty titleProperty = new SimpleStringProperty(title);
-                StringProperty descriptionProperty = new SimpleStringProperty(description);
-                StringProperty locationProperty = new SimpleStringProperty(location);
-                StringProperty typeProperty = new SimpleStringProperty(type);
-                StringProperty startProperty = new SimpleStringProperty(start.toString());
-                StringProperty endProperty = new SimpleStringProperty(end.toString());
-                IntegerProperty customerIdProperty = new SimpleIntegerProperty(customerId);
-                IntegerProperty userIdProperty = new SimpleIntegerProperty(userId);
-                IntegerProperty contactIdProperty = new SimpleIntegerProperty(contactId);
-
-                Appointment currentAppointments = new Appointment(
-                        apptIdProperty, titleProperty, descriptionProperty, locationProperty, typeProperty,
-                        startProperty, endProperty, userIdProperty, customerIdProperty, contactIdProperty);
-
-                appointments.add(currentAppointments);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return appointments;
+    private static Appointment mapAppointment(ResultSet results) throws SQLException {
+        return new Appointment(
+                new SimpleIntegerProperty(results.getInt("Appointment_ID")),
+                new SimpleStringProperty(results.getString("Title")),
+                new SimpleStringProperty(results.getString("Description")),
+                new SimpleStringProperty(results.getString("Location")),
+                new SimpleStringProperty(results.getString("Type")),
+                new SimpleStringProperty(results.getTimestamp("Start").toString()),
+                new SimpleStringProperty(results.getTimestamp("End").toString()),
+                new SimpleIntegerProperty(results.getInt("User_ID")),
+                new SimpleIntegerProperty(results.getInt("Customer_ID")),
+                new SimpleIntegerProperty(results.getInt("Contact_ID")));
     }
 
     public static ObservableList<String> getContacts() {
-        ObservableList<String> contacts = FXCollections.observableArrayList();
-        try {
-            String sqlQuery = "Select * FROM client_schedule.contacts";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet contactsResultSet = preparedStatement.executeQuery();
-
-            while (contactsResultSet.next()) {
-                int contactId = contactsResultSet.getInt("Contact_ID");
-                String contactName = contactsResultSet.getString("Contact_Name");
-
-                String contact = contactId + " " + contactName;
-                contacts.add(contact);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return contacts;
+        return queryIdNameChoices(
+                "SELECT Contact_ID, Contact_Name FROM contacts",
+                "Contact_ID", "Contact_Name");
     }
 
     public static ObservableList<String> getCustomers() {
-        ObservableList<String> customerChoices = FXCollections.observableArrayList();
-        try {
-            String sqlQuery = "SELECT * FROM client_schedule.customers";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                int customerId = resultSet.getInt("Customer_ID");
-                String customerName = resultSet.getString("Customer_Name");
-
-                String customerChoice = customerId + " " + customerName;
-                customerChoices.add(customerChoice);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return customerChoices;
+        return queryIdNameChoices(
+                "SELECT Customer_ID, Customer_Name FROM customers",
+                "Customer_ID", "Customer_Name");
     }
 
     public static ObservableList<String> getUsers() {
-        ObservableList<String> users = FXCollections.observableArrayList();
-
-        try {
-            String selectUsers = "SELECT * FROM client_schedule.users";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(selectUsers);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                int userId = resultSet.getInt("User_ID");
-                String userName = resultSet.getString("User_Name");
-
-                String user = userId + " " + userName;
-                users.add(user);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return users;
+        return queryIdNameChoices(
+                "SELECT User_ID, User_Name FROM users",
+                "User_ID", "User_Name");
     }
 
-    public static String getCustomerIdName(int customerIdNumber) {
-        String customerName = "";
+    private static ObservableList<String> queryIdNameChoices(String sql, String idColumn, String nameColumn) {
+        ObservableList<String> choices = FXCollections.observableArrayList();
 
-        try {
-            String sqlQuery = "SELECT * FROM client_schedule.customers WHERE Customer_ID= ?";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            preparedStatement.setString(1, String.valueOf(customerIdNumber));
-            ResultSet customerResultSet = preparedStatement.executeQuery();
-
-            while (customerResultSet.next()) {
-                customerName = customerResultSet.getString("Customer_Name");
+        try (PreparedStatement statement = JDBC.getConnection().prepareStatement(sql);
+             ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                choices.add(results.getInt(idColumn) + " " + results.getString(nameColumn));
             }
-        }
-
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        String customerIdName = customerIdNumber + " " + customerName;
+        return choices;
+    }
 
-        return customerIdName;
+    public static String getCustomerIdName(int customerId) {
+        String customerName = "";
+        String sql = "SELECT Customer_Name FROM customers WHERE Customer_ID = ?";
+
+        try (PreparedStatement statement = JDBC.getConnection().prepareStatement(sql)) {
+            statement.setInt(1, customerId);
+            try (ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    customerName = results.getString("Customer_Name");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return customerId + " " + customerName;
     }
 
     public static int getCustomerIdString(String customerOption) {
-        String customerIdString = customerOption.substring(0, customerOption.indexOf(" ", 0));
-        return Integer.parseInt(customerIdString);
+        return Integer.parseInt(customerOption.substring(0, customerOption.indexOf(' ')));
     }
 }

@@ -5,10 +5,10 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 
 public class Appointment {
     private IntegerProperty appointmentIdProperty;
@@ -100,43 +100,17 @@ public class Appointment {
     }
 
     public int getStartMonthInt() {
-        String startTimestampString = startTimeProperty().get();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-
-        int month = 0;
-
-        try {
-            Date parsedDate = dateFormat.parse(startTimestampString);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(parsedDate);
-            month = calendar.get(Calendar.MONTH);
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return month;
+        return getStartDateTime().getMonthValue() - 1;
     }
 
     public int getStartWeek()
     {
-        String startTimestampString = startTimeProperty().get();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        return getStartDateTime().get(weekFields.weekOfWeekBasedYear());
+    }
 
-        int week = 0;
-
-        try
-        {
-            Date parsedDate = dateFormat.parse(startTimestampString);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(parsedDate);
-            week = calendar.get(Calendar.WEEK_OF_YEAR);
-
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return week;
+    private LocalDateTime getStartDateTime() {
+        return Timestamp.valueOf(startTimeProperty().get()).toLocalDateTime();
     }
 
     public String getStartTime() {

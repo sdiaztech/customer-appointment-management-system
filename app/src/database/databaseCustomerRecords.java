@@ -14,16 +14,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DatabaseCustomerRecords {
+public final class DatabaseCustomerRecords {
+
+    private DatabaseCustomerRecords() {
+    }
 
     public static ObservableList<Customer> getAllCustomerRecords() throws SQLException {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
 
-        try {
-            String sqlQuery = "SELECT * FROM customers";
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet customersResultSet = preparedStatement.executeQuery();
-
+        String sqlQuery = "SELECT c.*, d.Division, co.Country_ID, co.Country "
+                + "FROM customers c "
+                + "JOIN first_level_divisions d ON c.Division_ID = d.Division_ID "
+                + "JOIN countries co ON d.Country_ID = co.Country_ID";
+        try (PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
+             ResultSet customersResultSet = preparedStatement.executeQuery()) {
             while (customersResultSet.next()) {
                 int customerId = customersResultSet.getInt("Customer_ID");
                 String customerName = customersResultSet.getString("Customer_Name");
@@ -47,13 +51,13 @@ public class DatabaseCustomerRecords {
                 StringProperty lastUpdateProperty = new SimpleStringProperty(lastUpdate);
                 StringProperty lastUpdatedByProperty = new SimpleStringProperty(lastUpdatedBy);
 
-                String customerDivisionName = searchForDivisionName(customerDivisionId);
+                String customerDivisionName = customersResultSet.getString("Division");
                 StringProperty customerDivisionNameProperty = new SimpleStringProperty(customerDivisionName);
 
-                int customerCountryId = searchForCountryId(customerDivisionIdProperty);
+                int customerCountryId = customersResultSet.getInt("Country_ID");
                 IntegerProperty customerCountryIdProperty = new SimpleIntegerProperty(customerCountryId);
 
-                String customerCountryName = searchForCountryName(customerCountryId);
+                String customerCountryName = customersResultSet.getString("Country");
                 StringProperty customerCountryNameProperty = new SimpleStringProperty(customerCountryName);
 
                 Customer currentCustomer = new Customer(customerIdProperty, customerNameProperty, customerAddressProperty,
@@ -73,13 +77,13 @@ public class DatabaseCustomerRecords {
 
     public static String searchForDivisionName(int divisionId) throws SQLException {
         String divisionName = "";
-        try {
-            String sqlQuery = "SELECT * FROM first_level_divisions WHERE Division_ID =" + divisionId;
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
+        String sqlQuery = "SELECT Division FROM first_level_divisions WHERE Division_ID = ?";
+        try (PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery)) {
+            preparedStatement.setInt(1, divisionId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
                 divisionName = resultSet.getString("Division");
+                }
             }
         }
         catch (SQLException e) {
@@ -93,13 +97,13 @@ public class DatabaseCustomerRecords {
         int countryId  = 0;
         int divisionId = divisionIdProperty.getValue();
 
-        try {
-            String sql = "SELECT * FROM first_level_divisions WHERE Division_ID =" + divisionId;
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sql);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                countryId = resultSet.getInt("Country_ID");
+        String sql = "SELECT Country_ID FROM first_level_divisions WHERE Division_ID = ?";
+        try (PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sql)) {
+            preparedStatement.setInt(1, divisionId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    countryId = resultSet.getInt("Country_ID");
+                }
             }
         }
         catch (SQLException e) {
@@ -112,13 +116,13 @@ public class DatabaseCustomerRecords {
     public static String searchForCountryName(int countryId) throws SQLException {
         String countryName = "";
 
-        try {
-            String sqlQuery = "SELECT * FROM countries WHERE Country_ID=" + countryId;
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery);
-            ResultSet countriesResultSet = preparedStatement.executeQuery();
-
-            while (countriesResultSet.next()) {
-                 countryName = countriesResultSet.getString("Country");
+        String sqlQuery = "SELECT Country FROM countries WHERE Country_ID = ?";
+        try (PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery)) {
+            preparedStatement.setInt(1, countryId);
+            try (ResultSet countriesResultSet = preparedStatement.executeQuery()) {
+                if (countriesResultSet.next()) {
+                    countryName = countriesResultSet.getString("Country");
+                }
             }
         }
         catch (SQLException e) {
@@ -128,8 +132,7 @@ public class DatabaseCustomerRecords {
     }
 
     public static String searchForDivisionId(String division) {
-        String divisionIdString = division.toString().substring(0, division.toString().indexOf(" ", 0));
-        return divisionIdString;
+        return division.substring(0, division.indexOf(' '));
     }
 
 }
