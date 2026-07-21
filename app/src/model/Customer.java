@@ -11,42 +11,10 @@ public class Customer {
     private StringProperty addressProperty;
     private StringProperty postalCodeProperty;
     private StringProperty phoneNumberProperty;
-    private StringProperty createDateProperty;
-    private StringProperty authorProperty;
-    private StringProperty lastUpdateProperty;
-    private StringProperty lastUpdatedByProperty;
     private IntegerProperty divisionIdProperty;
     private StringProperty divisionProperty;
     private IntegerProperty countryIdProperty;
     private StringProperty countryProperty;
-
-    public Customer(IntegerProperty customerIdProperty,
-                    StringProperty customerNameProperty,
-                    StringProperty addressProperty,
-                    StringProperty postalCodeProperty,
-                    StringProperty phoneNumberProperty,
-                    StringProperty createDateProperty,
-                    StringProperty authorProperty,
-                    StringProperty lastUpdateProperty,
-                    StringProperty lastUpdatedByProperty,
-                    IntegerProperty divisionIdProperty,
-                    StringProperty divisionProperty,
-                    IntegerProperty countryIdProperty,
-                    StringProperty countryProperty) {
-        this.customerIdProperty = customerIdProperty;
-        this.customerNameProperty = customerNameProperty;
-        this.addressProperty = addressProperty;
-        this.postalCodeProperty = postalCodeProperty;
-        this.phoneNumberProperty = phoneNumberProperty;
-        this.createDateProperty = createDateProperty;
-        this.authorProperty = authorProperty;
-        this.lastUpdateProperty = lastUpdateProperty;
-        this.lastUpdatedByProperty = lastUpdatedByProperty;
-        this.divisionIdProperty = divisionIdProperty;
-        this.divisionProperty = divisionProperty;
-        this.countryIdProperty = countryIdProperty;
-        this.countryProperty = countryProperty;
-    }
 
     public Customer(IntegerProperty customerIdProperty,
                     StringProperty customerNameProperty,

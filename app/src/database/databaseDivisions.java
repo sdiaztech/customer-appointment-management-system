@@ -26,8 +26,8 @@ public final class DatabaseDivisions {
 
     private static ObservableList<Division> getDivisionsByCountry(int countryId) {
         ObservableList<Division> divisions = FXCollections.observableArrayList();
-        String sql = "SELECT Division_ID, Division, Create_Date, Created_By, Last_Update, "
-                + "Last_Updated_By, Country_ID FROM first_level_divisions WHERE Country_ID = ?";
+        String sql = "SELECT Division_ID, Division "
+                + "FROM first_level_divisions WHERE Country_ID = ?";
 
         try (PreparedStatement statement = JDBC.getConnection().prepareStatement(sql)) {
             statement.setInt(1, countryId);
@@ -35,12 +35,7 @@ public final class DatabaseDivisions {
                 while (results.next()) {
                     divisions.add(new Division(
                             results.getInt("Division_ID"),
-                            results.getString("Division"),
-                            results.getString("Create_Date"),
-                            results.getString("Created_By"),
-                            results.getString("Last_Update"),
-                            results.getString("Last_Updated_By"),
-                            results.getInt("Country_ID")));
+                            results.getString("Division")));
                 }
             }
         } catch (SQLException e) {

@@ -46,31 +46,9 @@ public class ViewCustomersController implements Initializable {
     @FXML
     public TableView<Customer> customerRecordsTableView;
     @FXML
-    private TableColumn<Customer,Integer> columnCustomerID;
-    @FXML
-    private TableColumn<Customer,String> columnCustomerName;
-    @FXML
-    private TableColumn<Customer,String> columnAddress;
-    @FXML
-    private TableColumn<Customer,String> columnPostalCode;
-    @FXML
-    private TableColumn<Customer,String> columnDivision;
-    @FXML
-    private TableColumn<Customer,String> columnCountry;
-    @FXML
-    private TableColumn<Customer,String> columnPhone;
-    @FXML
-    private Button exitButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
     private Button viewApptsButton;
     @FXML
     private Button viewReportsButton;
-    @FXML
-    private Button updateButton;
-    @FXML
-    private Button addButton;
     @FXML
     private Label deleteConfirmationLabel;
 

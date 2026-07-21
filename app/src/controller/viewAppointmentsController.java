@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -38,42 +37,7 @@ public class ViewAppointmentsController implements Initializable {
     @FXML
     private TableView<Appointment> viewApptsTableView;
     @FXML
-    private TableColumn<Appointment,Number> colAppointmentId;
-    @FXML
-    private TableColumn<Appointment,String> colTitle;
-    @FXML
-    private TableColumn<Appointment,String> colDescription;
-    @FXML
-    private TableColumn<Appointment,String> colType;
-    @FXML
-    private TableColumn<Appointment,String> colLocation;
-    @FXML
-    private TableColumn<Appointment,Timestamp> colStart;
-    @FXML
-    private TableColumn<Appointment,Timestamp> colEnd;
-    @FXML
-    private TableColumn<Appointment,Number> colContactId;
-    @FXML
-    private TableColumn<Appointment,Number> colUserId;
-    @FXML
-    private TableColumn<Appointment,Number> colCustomerId;
-
-    @FXML
-    private Button exitButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
     private Button viewCustomersButton;
-    @FXML
-    private Button updateButton;
-    @FXML
-    private Button addButton;
-    @FXML
-    private RadioButton monthViewRadioButton;
-    @FXML
-    private RadioButton weekViewRadioButton;
-    @FXML
-    private RadioButton allViewRadioButton;
     @FXML
     private Label deleteApptConfirmationLabel;
 

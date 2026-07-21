@@ -99,24 +99,6 @@ public final class DatabaseAppointments {
         return choices;
     }
 
-    public static String getCustomerIdName(int customerId) {
-        String customerName = "";
-        String sql = "SELECT Customer_Name FROM customers WHERE Customer_ID = ?";
-
-        try (PreparedStatement statement = JDBC.getConnection().prepareStatement(sql)) {
-            statement.setInt(1, customerId);
-            try (ResultSet results = statement.executeQuery()) {
-                if (results.next()) {
-                    customerName = results.getString("Customer_Name");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return customerId + " " + customerName;
-    }
-
     public static int getCustomerIdString(String customerOption) {
         return Integer.parseInt(customerOption.substring(0, customerOption.indexOf(' ')));
     }

@@ -27,12 +27,6 @@ import java.util.stream.Collectors;
 
 public class ViewReportsController implements Initializable {
     @FXML
-    private Button apptsReportButton;
-    @FXML
-    private Button schedulesReportButton;
-    @FXML
-    private Button usersReportButton;
-    @FXML
     private Button viewApptsButton;
     @FXML
     private Button viewCustomersButton;

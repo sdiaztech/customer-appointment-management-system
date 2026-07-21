@@ -35,10 +35,6 @@ public final class DatabaseCustomerRecords {
                 String customerZipCode = customersResultSet.getString("Postal_Code");
                 String customerPhoneNumber = customersResultSet.getString("Phone");
                 int customerDivisionId = customersResultSet.getInt("Division_ID");
-                String createDate = customersResultSet.getString("Create_Date");
-                String createdBy = customersResultSet.getString("Created_By");
-                String lastUpdate = customersResultSet.getString("Last_Update");
-                String lastUpdatedBy = customersResultSet.getString("Last_Updated_By");
 
                 IntegerProperty customerIdProperty = new SimpleIntegerProperty(customerId);
                 StringProperty customerNameProperty = new SimpleStringProperty(customerName);
@@ -46,10 +42,6 @@ public final class DatabaseCustomerRecords {
                 StringProperty customerZipCodeProperty = new SimpleStringProperty(customerZipCode);
                 StringProperty customerPhoneNumberProperty = new SimpleStringProperty(customerPhoneNumber);
                 IntegerProperty customerDivisionIdProperty = new SimpleIntegerProperty(customerDivisionId);
-                StringProperty createDateProperty = new SimpleStringProperty(createDate);
-                StringProperty createdByProperty = new SimpleStringProperty(createdBy);
-                StringProperty lastUpdateProperty = new SimpleStringProperty(lastUpdate);
-                StringProperty lastUpdatedByProperty = new SimpleStringProperty(lastUpdatedBy);
 
                 String customerDivisionName = customersResultSet.getString("Division");
                 StringProperty customerDivisionNameProperty = new SimpleStringProperty(customerDivisionName);
@@ -61,9 +53,8 @@ public final class DatabaseCustomerRecords {
                 StringProperty customerCountryNameProperty = new SimpleStringProperty(customerCountryName);
 
                 Customer currentCustomer = new Customer(customerIdProperty, customerNameProperty, customerAddressProperty,
-                        customerZipCodeProperty, customerPhoneNumberProperty, createDateProperty, createdByProperty,
-                        lastUpdateProperty, lastUpdatedByProperty, customerDivisionIdProperty, customerDivisionNameProperty,
-                        customerCountryIdProperty, customerCountryNameProperty);
+                        customerZipCodeProperty, customerDivisionNameProperty, customerCountryNameProperty,
+                        customerPhoneNumberProperty, customerDivisionIdProperty, customerCountryIdProperty);
 
                 customers.add(currentCustomer);
             }
@@ -73,24 +64,6 @@ public final class DatabaseCustomerRecords {
         }
 
         return customers;
-    }
-
-    public static String searchForDivisionName(int divisionId) throws SQLException {
-        String divisionName = "";
-        String sqlQuery = "SELECT Division FROM first_level_divisions WHERE Division_ID = ?";
-        try (PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery)) {
-            preparedStatement.setInt(1, divisionId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                divisionName = resultSet.getString("Division");
-                }
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return divisionName;
     }
 
     public static int searchForCountryId(IntegerProperty divisionIdProperty) throws SQLException {
@@ -111,24 +84,6 @@ public final class DatabaseCustomerRecords {
         }
 
         return countryId;
-    }
-
-    public static String searchForCountryName(int countryId) throws SQLException {
-        String countryName = "";
-
-        String sqlQuery = "SELECT Country FROM countries WHERE Country_ID = ?";
-        try (PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(sqlQuery)) {
-            preparedStatement.setInt(1, countryId);
-            try (ResultSet countriesResultSet = preparedStatement.executeQuery()) {
-                if (countriesResultSet.next()) {
-                    countryName = countriesResultSet.getString("Country");
-                }
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return countryName;
     }
 
     public static String searchForDivisionId(String division) {

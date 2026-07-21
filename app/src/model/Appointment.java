@@ -77,10 +77,6 @@ public class Appointment {
         return descriptionProperty;
     }
 
-    public String getLocation() {
-        return locationProperty().get();
-    }
-
     public StringProperty locationProperty() {
         if (locationProperty == null) {
             locationProperty = new SimpleStringProperty(this, "location");
