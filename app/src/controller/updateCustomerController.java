@@ -1,7 +1,6 @@
 package controller;
 
 import database.DatabaseCountries;
-import database.DatabaseCustomerRecords;
 import database.DatabaseDivisions;
 import database.DatabaseQuery;
 import database.JDBC;

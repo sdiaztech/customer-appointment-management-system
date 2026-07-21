@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -77,8 +78,9 @@ public class ViewAppointmentsController implements Initializable {
         columnContactId.setCellValueFactory(cell -> cell.getValue().contactIdProperty());
 
         viewApptsTableView.setItems(clientAppointments);
-        viewApptsTableView.getColumns().addAll(columnApptId, columnTitle, columnDescription, columnLocation,
-                columnType, columnStartTime, columnEndTime, columnCustomerId, columnUserId, columnContactId);
+        viewApptsTableView.getColumns().addAll(List.of(
+                columnApptId, columnTitle, columnDescription, columnLocation, columnType,
+                columnStartTime, columnEndTime, columnCustomerId, columnUserId, columnContactId));
     }
 
     public void viewCustomersButtonListener(ActionEvent actionEvent) throws IOException {
@@ -190,8 +192,9 @@ public class ViewAppointmentsController implements Initializable {
             columnUserId.setCellValueFactory(cell -> cell.getValue().userIdProperty());
             columnContactId.setCellValueFactory(cell -> cell.getValue().contactIdProperty());
             viewApptsTableView.setItems(clientAppointments);
-            viewApptsTableView.getColumns().addAll(columnApptId, columnTitle, columnDescription, columnLocation,
-                    columnType, columnStart, columnEnd, columnCustomerId, columnUserId, columnContactId);
+            viewApptsTableView.getColumns().addAll(List.of(
+                    columnApptId, columnTitle, columnDescription, columnLocation, columnType,
+                    columnStart, columnEnd, columnCustomerId, columnUserId, columnContactId));
             viewApptsTableView.setItems(apptsThisMonth);
         }
         catch (SQLException e) {
@@ -230,8 +233,9 @@ public class ViewAppointmentsController implements Initializable {
             columnUserId.setCellValueFactory(cell -> cell.getValue().userIdProperty());
             columnContactId.setCellValueFactory(cell -> cell.getValue().contactIdProperty());
             viewApptsTableView.setItems(clientAppointments);
-            viewApptsTableView.getColumns().addAll(columnApptId, columnTitle, columnDescription, columnLocation,
-                    columnType, columnStart, columnEnd, columnCustomerId, columnUserId, columnContactId);
+            viewApptsTableView.getColumns().addAll(List.of(
+                    columnApptId, columnTitle, columnDescription, columnLocation, columnType,
+                    columnStart, columnEnd, columnCustomerId, columnUserId, columnContactId));
             viewApptsTableView.setItems(appointmentsThisWeek);
         }
         catch (SQLException e){

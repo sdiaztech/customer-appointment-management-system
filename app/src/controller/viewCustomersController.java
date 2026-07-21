@@ -33,6 +33,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.function.Consumer;
@@ -84,8 +85,9 @@ public class ViewCustomersController implements Initializable {
         columnPhone.setCellValueFactory(new PropertyValueFactory<Customer, String>("phoneNumber"));
 
         customerRecordsTableView.setItems(customerRecords);
-        customerRecordsTableView.getColumns().addAll(columnCustomerID, columnCustomerName, columnAddress,
-                columnPostalCode, columnDivision, columnCountry, columnPhone);
+        customerRecordsTableView.getColumns().addAll(List.of(
+                columnCustomerID, columnCustomerName, columnAddress, columnPostalCode,
+                columnDivision, columnCountry, columnPhone));
     }
 
     public void exitButtonListener(ActionEvent actionEvent) {
